@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrackMyTrip | Home</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ====== الخلفية الفيديو ====== */
+    .bg-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* يخلي الفيديو يغطي الشاشة بالكامل */
+      z-index: 0;
+    }
+
+    /* ====== Overlay غامق لتوضيح النصوص ====== */
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 1;
+    }
+
+    nav {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 80px;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(6px);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fbfeff;
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #104d6c;
+    }
+
+    .auth-buttons button {
+      border: none;
+      background: transparent;
+      color: #fff;
+      margin-left: 15px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .auth-buttons .register {
+      background: #414446;
+      padding: 8px 18px;
+      border-radius: 6px;
+    }
+
+    .auth-buttons button:hover {
+      opacity: 0.8;
+    }
+
+    /* ====== زر تغيير اللغة ====== */
+    .language-toggle {
+      position: fixed;
+      top: 10px;
+      right: 20px;
+      z-index: 3;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      border: none;
+      background: #414446;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .language-toggle:hover {
+      background: #83bfff;
+    }
+
+    .language-toggle i {
+      font-size: 20px;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      top: 25%;
+      width: 100%;
+    }
+
+    .hero h1 {
+      font-size: 56px;
+      font-weight: 700;
+    }
+
+    .hero p {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #ddd;
+    }
+
+    .search-box {
+  position: relative;
+  z-index: 3;
+  background: rgba(255, 255, 255, 0.2); 
+  color: white; 
+  width: 90%; 
+  max-width: 1000px; 
+  margin: 90px auto; 
+  padding: 90px; 
+  border-radius: 16px; 
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4); 
+  backdrop-filter: blur(10px); 
+  border: 1px solid rgba(255, 255, 255, 0.3); 
+}
+
+
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .hero h1 {
+        font-size: 38px;
+      }
+      .search-box {
+        width: 90%;
+        padding: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ====== فيديو الخلفية ====== -->
+  <video class="bg-video" autoplay muted loop>
+    <source src="856360-hd_1920_1080_30fps.mp4" type="video/mp4">
+  </video>
+
+  <!-- ====== زر تغيير اللغة ====== -->
+  <button class="language-toggle" onclick="toggleLanguage()">
+    <i class="fa-solid fa-globe"></i>
+  </button>
+
+  <!-- ====== Navbar ====== -->
+  <nav>
+    <div class="logo">TrackMyTrip</div>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">My Bookings</a></li>
+      <li><a href="#">Help & Support</a></li>
+      <li><a href="#">About</a></li>
+    </ul>
+    <div class="auth-buttons">
+      <button>Login</button>
+      <button class="register">Register</button>
+    </div>
+  </nav>
+
+  <!-- ====== Hero Section ====== -->
+  <div class="hero">
+    <h1>TrackMyTrip</h1>
+    <p>Travel safely, comfortably, and on time across the Kingdom.</p>
+    <div class="search-box"></div>
+  </div>
+
+</body>
+</html> 
