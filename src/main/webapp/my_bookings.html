@@ -147,10 +147,7 @@
   <div class="topbar">
     <div class="title">My Bookings</div>
   </div>
-  <div class="tabs" role="tablist">
-    <button class="tab active" data-scope="upcoming">Upcoming</button>
-    <button class="tab" data-scope="past">Past</button>
-  </div>
+  
 </header>
 
 <main>
@@ -158,8 +155,8 @@
   <div class="timeline">
     <button class="chip active" data-range="today">Today</button>
     <button class="chip" data-range="tomorrow">Tomorrow</button>
-    <button class="chip" data-range="week">Next 7 Days</button>
-    <button class="chip" data-range="month">This Month</button>
+    <button class="chip" data-range="week">Next Week</button>
+   
   </div>
 
   <!-- Cards -->
@@ -254,9 +251,12 @@
     card.className = "card";
     card.innerHTML = `
       <div class="card-header">
-        <div class="thumb">
-          <div>TRAIN</div>
-        </div>
+    	<div class="thumb">
+    	  <svg width="34" height="34" viewBox="0 0 24 24" fill="#0b7285">
+    	    <path d="M12 2c-4.97 0-9 1.79-9 4v9c0 1.66 1.34 3 3 3l-2 2v1h2l3-3h4l3 3h2v-1l-2-2c1.66 0 3-1.34 3-3V6c0-2.21-4.03-4-9-4Zm0 2c3.87 0 7 1.13 7 2s-3.13 2-7 2-7-1.13-7-2 3.13-2 7-2Zm-5 7h2v2H7v-2Zm8 0h2v2h-2v-2Z"/>
+    	  </svg>
+    	</div>
+
         <div class="meta">
           <div class="route">${b.from} → ${b.to}</div>
           <div class="time">${b.date} • ${b.dep} – ${b.arr} • ${b.id}</div>
@@ -320,15 +320,6 @@
     return card;
   }
 
-  // tabs (upcoming / past)
-  tabs.forEach(t=>{
-    t.addEventListener("click", ()=>{
-      tabs.forEach(x=>x.classList.remove("active"));
-      t.classList.add("active");
-      currentScope = t.dataset.scope;
-      render();
-    });
-  });
 
   // timeline chips
   chips.forEach(c=>{
