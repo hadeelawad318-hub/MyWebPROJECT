@@ -1,17 +1,27 @@
 package com.trackmytrip.servlets;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 
 @WebServlet("/search")
 public class SearchServlet extends HttpServlet {
 
-    private static final String URL  = "jdbc:mysql://localhost:3306/train_booking?useSSL=false&serverTimezone=UTC";
-    private static final String USER = "root";      // عدّليها حسب إعداداتك
-    private static final String PASS = "password";  // عدّليها حسب إعداداتك
+    // عدّلي معلومات الاتصال حسب قاعدة بياناتك
+    private static final String URL  =
+            "jdbc:mysql://localhost:3306/train_booking?useSSL=false&serverTimezone=UTC";
+    private static final String USER = "root";      // اسم المستخدم في MySQL
+    private static final String PASS = "password";  // كلمة المرور في MySQL
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -25,7 +35,7 @@ public class SearchServlet extends HttpServlet {
         String date  = request.getParameter("date");
         String qtySt = request.getParameter("qty");
 
-        // تحقق بسيط مثل الشيتات
+        // تحقق بسيط من المدخلات
         if (from == null || to == null || date == null || qtySt == null ||
             from.isEmpty() || to.isEmpty() || date.isEmpty()) {
 
@@ -51,20 +61,20 @@ public class SearchServlet extends HttpServlet {
         ResultSet rs = null;
 
         try {
-            // نفس أسلوب JDBC في الشيتات
+            // تحميل درايفر MySQL (يتطلب وجود mysql-connector-j في WEB-INF/lib)
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection(URL, USER, PASS);
 
             String sql =
                 "SELECT id, from_code, to_code, depart_time, arrive_time, class, price, available_seats " +
                 "FROM trips " +
-                "WHERE from_code=? AND to_code=? AND travel_date=? AND available_seats>=? " +
+                "WHERE from_code = ? AND to_code = ? AND travel_date = ? AND available_seats >= ? " +
                 "ORDER BY depart_time";
 
             ps = conn.prepareStatement(sql);
             ps.setString(1, from);
             ps.setString(2, to);
-            ps.setString(3, date);   // لو عندك DATE حقيقي ممكن تستخدمين setDate
+            ps.setString(3, date);   // لو نوع العمود DATE هذا يكفي
             ps.setInt(4, qty);
 
             rs = ps.executeQuery();
@@ -81,7 +91,7 @@ public class SearchServlet extends HttpServlet {
                 double price       = rs.getDouble("price");
                 int availableSeats = rs.getInt("available_seats");
 
-                // نبني صفوف الجدول كـ HTML نصّي
+                // نبني صف HTML للجدول
                 rows.append("<tr>");
                 rows.append("<td>").append(fromCode).append("</td>");
                 rows.append("<td>").append(toCode).append("</td>");
@@ -109,7 +119,7 @@ public class SearchServlet extends HttpServlet {
             try { if (conn != null) conn.close(); } catch (Exception ignored) {}
         }
 
-        // نرسل النتائج للـ JSP
+        // إرسال النتائج إلى صفحة JSP
         request.setAttribute("rowHtml", rows.toString());
         request.setAttribute("count", count);
         request.setAttribute("qty", qty);
@@ -117,4 +127,5 @@ public class SearchServlet extends HttpServlet {
         request.getRequestDispatcher("search.jsp").forward(request, response);
     }
 }
+
 
