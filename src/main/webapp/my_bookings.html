@@ -259,7 +259,10 @@
 
         <div class="meta">
           <div class="route">${b.from} → ${b.to}</div>
-          <div class="time">${b.date} • ${b.dep} – ${b.arr} • ${b.id}</div>
+          <div class="time">
+          ${formatDate(b.date)} | ${b.dep} · Seat: ${b.seat} · Class: ${b.class ?? "Economy"}
+        </div>
+
         </div>
         <span class="status ${statusClass(b.status)}">
           ${b.status.charAt(0).toUpperCase()+b.status.slice(1)}
