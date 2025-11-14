@@ -1,0 +1,297 @@
+/* ===== General ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  height: 100vh;
+  color: white;
+  position: relative;
+  overflow-x: hidden;
+  background-image: url('pexels-ingo-610683.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 0;
+}
+
+/* ===== Navbar ===== */
+nav {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(6px);
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fbfeff;
+  letter-spacing: 1px;
+}
+
+.top-links {
+  display: flex;
+  gap: 30px;
+}
+
+.top-links a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.top-links a:hover {
+  color: #83bfff;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  z-index: 3;
+}
+
+.auth-buttons button {
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  padding: 8px 18px;
+  border-radius: 6px;
+}
+
+.auth-buttons .login {
+  background: #414446;
+}
+
+.auth-buttons .signup {
+  background: #83bfff;
+  color: #000;
+}
+
+.auth-buttons button:hover {
+  opacity: 0.8;
+}
+
+.language-toggle {
+  border: none;
+  background: #414446;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.language-toggle:hover {
+  background: #83bfff;
+}
+
+/* ===== Hero Section ===== */
+.hero {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  top: 18%;
+  width: 100%;
+}
+
+.hero h1 {
+  font-size: 56px;
+  font-weight: 700;
+}
+
+.hero p {
+  margin-top: 10px;
+  font-size: 18px;
+  color: #ddd;
+}
+
+.search-box {
+  position: relative;
+  z-index: 3;
+  background: white;
+  color: black;
+  width: 90%;
+  max-width: 1000px;
+  margin: 60px auto;
+  padding: 40px 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+}
+
+.trip-options {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 30px;
+  margin-top: -10px;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+}
+
+.icon-box {
+  background-color: #eaf5f7;
+  color: #006b75;
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-top: -6px;
+}
+
+.text h4 {
+  color: #333;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.text p {
+  color: #007a89;
+  font-size: 15px;
+  margin: 0;
+}
+
+/* ===== Dropdowns ===== */
+.dropdown {
+  display: none;
+  margin-top: 10px;
+}
+
+.from-to-dropdown select,
+.date-dropdown input,
+.passengers-dropdown input {
+  margin: 5px 0;
+  padding: 6px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.passengers-dropdown button {
+  margin-top: 5px;
+  padding: 6px 12px;
+  border: none;
+  background-color: #83bfff;
+  color: #000;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.passengers-dropdown button:hover {
+  opacity: 0.8;
+}
+
+/* ===== Modal ===== */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.7);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #fff;
+  color: #000;
+  padding: 30px 25px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+}
+
+.modal-content input {
+  width: 80%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.modal-content .submit-btn {
+  padding: 10px 25px;
+  background: #83bfff;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.modal-content .submit-btn:hover {
+  opacity: 0.8;
+}
+
+.modal-content .close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 22px;
+  cursor: pointer;
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .top-links {
+    gap: 15px;
+  }
+  .auth-buttons {
+    margin-top: 10px;
+  }
+  .hero h1 {
+    font-size: 38px;
+  }
+  .search-box {
+    width: 90%;
+    padding: 30px;
+  }
+  .trip-options {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
