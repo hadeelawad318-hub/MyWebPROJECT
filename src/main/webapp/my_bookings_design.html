@@ -19,7 +19,7 @@
       min-height: 100vh;
       color: white;
       position: relative;
-      background-image: url('pexels-ingo-610683.jpg'); /* نفس خلفية الهوم */
+      background-image: url('pexels-ingo-610683.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -64,10 +64,7 @@
       transition: 0.3s;
     }
 
-    .top-links a:hover {
-      color: #83bfff;
-    }
-
+    .top-links a:hover { color: #83bfff; }
     .top-links a.active {
       color: #83bfff;
       font-weight: 600;
@@ -91,18 +88,12 @@
       border-radius: 6px;
     }
 
-    .auth-buttons .login {
-      background: #414446;
-    }
-
+    .auth-buttons .login { background: #414446; }
     .auth-buttons .signup {
       background: #83bfff;
       color: #000;
     }
-
-    .auth-buttons button:hover {
-      opacity: 0.8;
-    }
+    .auth-buttons button:hover { opacity: 0.8; }
 
     .language-toggle {
       border: none;
@@ -117,10 +108,7 @@
       border-radius: 6px;
       transition: 0.3s;
     }
-
-    .language-toggle:hover {
-      background: #83bfff;
-    }
+    .language-toggle:hover { background: #83bfff; }
 
     /* ===== Hero / Content ===== */
     .hero {
@@ -153,6 +141,7 @@
       padding: 30px 20px 26px;
       border-radius: 16px;
       box-shadow: 0 4px 25px rgba(0, 0, 0, 0.45);
+      text-align: left;
     }
 
     /* timeline */
@@ -251,18 +240,9 @@
       white-space: nowrap;
     }
 
-    .status.confirmed {
-      background: #ecfdf5;
-      color: #16a34a;
-    }
-    .status.canceled {
-      background: #fef2f2;
-      color: #ef4444;
-    }
-    .status.pending {
-      background: #fffbeb;
-      color: #f59e0b;
-    }
+    .status.confirmed { background: #ecfdf5; color: #16a34a; }
+    .status.canceled  { background: #fef2f2; color: #ef4444; }
+    .status.pending   { background: #fffbeb; color: #f59e0b; }
 
     .toggle-label {
       font-size: 11px;
@@ -279,9 +259,7 @@
       display: none;
     }
 
-    .card.open .collapsible {
-      display: block;
-    }
+    .card.open .collapsible { display: block; }
 
     .grid2 {
       display: grid;
@@ -394,22 +372,15 @@
       cursor: pointer;
     }
 
-    /* responsive */
     @media (max-width: 768px) {
       nav {
         flex-direction: column;
         gap: 10px;
         padding: 14px 20px;
       }
-      .top-links {
-        gap: 15px;
-      }
-      .auth-buttons {
-        margin-top: 8px;
-      }
-      .hero h1 {
-        font-size: 30px;
-      }
+      .top-links { gap: 15px; }
+      .auth-buttons { margin-top: 8px; }
+      .hero h1 { font-size: 30px; }
       .bookings-box {
         width: 92%;
         padding: 24px 16px;
@@ -424,10 +395,10 @@
     <div class="logo">TrackMyTrip</div>
 
     <div class="top-links">
-      <a href="#">Home</a>
-      <a href="#">Book</a>
-      <a href="#" class="active">My Bookings</a>
-      <a href="#">Support</a>
+      <a href="home.html">Home</a>
+      <a href="book.html">Book</a>
+      <a href="my_bookings_design.html" class="active">My Bookings</a>
+      <a href="support.html">Support</a>
     </div>
 
     <div class="auth-buttons">
@@ -458,8 +429,8 @@
   </div>
 
   <script>
-    // بيانات تجريبية لعرض التصميم (يمكن تكبيرها أو تعديلها)
-    const BOOKINGS = [
+    // حجوزات افتراضية
+    const DEFAULT_BOOKINGS = [
       {
         id: "SAR-94821",
         date: "2025-11-14",
@@ -498,6 +469,16 @@
       }
     ];
 
+    function loadSavedBookings() {
+      try {
+        return JSON.parse(localStorage.getItem("trackMyTripBookings") || "[]");
+      } catch(e) {
+        return [];
+      }
+    }
+
+    const ALL_BOOKINGS = DEFAULT_BOOKINGS.concat(loadSavedBookings());
+
     const cardsEl = document.getElementById("cards");
     const chips   = document.querySelectorAll(".chip");
     let currentRange = "week";
@@ -529,7 +510,7 @@
 
     function render(){
       cardsEl.innerHTML = "";
-      const list = BOOKINGS.filter(b => dateInRange(b.date, currentRange));
+      const list = ALL_BOOKINGS.filter(b => dateInRange(b.date, currentRange));
 
       if (list.length === 0) {
         cardsEl.innerHTML =
@@ -619,11 +600,7 @@
 
       header.addEventListener("click", () => {
         const isOpen = card.classList.toggle("open");
-        if (isOpen) {
-          toggleLabel.textContent = "Hide details";
-        } else {
-          toggleLabel.textContent = "View details";
-        }
+        toggleLabel.textContent = isOpen ? "Hide details" : "View details";
       });
 
       reschedBtn.addEventListener("click", (e) => {
