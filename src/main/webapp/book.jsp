@@ -451,12 +451,12 @@
 
         <div class="divider"></div>
 
-        <div class="results-title">Available trains (sample data)</div>
+       <div class="results-title">Available trains</div>
         <div class="results">
           <!-- result 1 -->
           <div class="result-card"
-               data-from="Riyadh"
-               data-to="Qurayyat"
+               data-from="<%= (from != null ? from : "Riyadh") %>"
+               data-to="<%= (to   != null ? to   : "Qurayyat") %>"
                data-dep="08:10 AM"
                data-arr="01:55 PM"
                data-class="Economy"
@@ -465,7 +465,9 @@
               <i class="fa-solid fa-train-subway"></i>
             </div>
             <div class="result-meta">
-              <div class="result-route">Riyadh → Qurayyat</div>
+              <div class="result-route">
+                <%= (from != null ? from : "Riyadh") %> → <%= (to != null ? to : "Qurayyat") %>
+              </div>
               <div class="result-line">
                 08:10 AM – 01:55 PM · SAR 180 · Economy
               </div>
@@ -478,8 +480,8 @@
 
           <!-- result 2 -->
           <div class="result-card"
-               data-from="Riyadh"
-               data-to="Qurayyat"
+               data-from="<%= (from != null ? from : "Riyadh") %>"
+               data-to="<%= (to   != null ? to   : "Qurayyat") %>"
                data-dep="01:20 PM"
                data-arr="06:00 PM"
                data-class="Business"
@@ -488,7 +490,9 @@
               <i class="fa-solid fa-train-subway"></i>
             </div>
             <div class="result-meta">
-              <div class="result-route">Riyadh → Qurayyat</div>
+              <div class="result-route">
+                <%= (from != null ? from : "Riyadh") %> → <%= (to != null ? to : "Qurayyat") %>
+              </div>
               <div class="result-line">
                 01:20 PM – 06:00 PM · SAR 220 · Business
               </div>
@@ -585,6 +589,7 @@ const selectedSeatsListSpan  = document.getElementById("selectedSeatsList");
 const seatTripLabel          = document.getElementById("seatTripLabel");
 const seatPriceInfo          = document.getElementById("seatPriceInfo");
 const confirmBtn             = document.getElementById("confirmBookingBtn");
+
 
 // تحديث حالة زر التأكيد (مفعّل / غير مفعّل)
 function updateConfirmState() {
