@@ -309,6 +309,44 @@
     .btn-confirm:hover {
       background: #15803d;
     }
+        .seat-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 40px);
+      gap: 8px 10px;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .seat {
+      width: 40px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: #ffffff;
+    }
+
+    .seat.aisle {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .seat.selected {
+      background: #1d4ed8;
+      color: #ffffff;
+      border-color: #1d4ed8;
+    }
+
+    .seat-selected-list {
+      font-size: 12px;
+      color: #4b5563;
+      margin-bottom: 8px;
+    }
+    
 
     @media (max-width: 900px) {
       .booking-layout {
@@ -466,39 +504,56 @@
       </div>
 
       <!-- عمود: اختيار المقعد -->
+          <!-- عمود: اختيار المقعد -->
       <div class="seat-section" id="seatSection">
         <div class="seat-section-title">Seat selection</div>
         <p class="seat-trip-label" id="seatTripLabel">
-          Select a train from the left to choose your seat.
+          Select a train from the left to choose your seats.
         </p>
 
         <div class="seat-legend">
-          Click on a seat to select it.
+          Click on seats to select them. You must select seats for all passengers.
         </div>
 
+        <!-- شبكة المقاعد (تشبه مقصورة القطار) -->
         <div class="seat-grid" id="seatGrid">
-          <!-- صف A -->
+          <!-- Row 1 -->
           <button class="seat" data-seat="1A">1A</button>
           <button class="seat" data-seat="1B">1B</button>
           <div class="seat aisle"></div>
           <button class="seat" data-seat="1C">1C</button>
+          <button class="seat" data-seat="1D">1D</button>
 
-          <!-- صف B -->
+          <!-- Row 2 -->
           <button class="seat" data-seat="2A">2A</button>
           <button class="seat" data-seat="2B">2B</button>
           <div class="seat aisle"></div>
           <button class="seat" data-seat="2C">2C</button>
+          <button class="seat" data-seat="2D">2D</button>
 
-          <!-- صف C -->
+          <!-- Row 3 -->
           <button class="seat" data-seat="3A">3A</button>
           <button class="seat" data-seat="3B">3B</button>
           <div class="seat aisle"></div>
           <button class="seat" data-seat="3C">3C</button>
+          <button class="seat" data-seat="3D">3D</button>
+
+          <!-- Row 4 -->
+          <button class="seat" data-seat="4A">4A</button>
+          <button class="seat" data-seat="4B">4B</button>
+          <div class="seat aisle"></div>
+          <button class="seat" data-seat="4C">4C</button>
+          <button class="seat" data-seat="4D">4D</button>
         </div>
 
         <p class="seat-selected-label">
-          Selected seat:
-          <span id="selectedSeat">None</span>
+          Selected seats:
+          <span id="selectedSeatsCount">0</span> /
+          <span id="totalPassengers"><%= (qty != null ? qty : "1") %></span>
+        </p>
+
+        <p class="seat-selected-list">
+          Seats: <span id="selectedSeatsList">None</span>
         </p>
 
         <button type="button" class="btn-confirm" id="confirmBookingBtn">
@@ -506,19 +561,50 @@
           Confirm booking
         </button>
       </div>
-    </div>
-  </div>
-</div>
+
 
 <script>
-  // قيم البحث القادمة من السيرفلت (لو احتجناها في JS)
+  // قيم البحث القادمة من السيرفلت
   const initialFrom = "<%= (from != null ? from : "") %>";
   const initialTo   = "<%= (to   != null ? to   : "") %>";
   const initialDate = "<%= (date != null ? date : "") %>";
   const initialQty  = "<%= (qty  != null ? qty  : "1") %>";
 
   let selectedTrain = null;
-  let selectedSeat  = null;
+  let selectedSeats = [];
+
+  const passengersInput = document.getElementById("passengers");
+  let passengersCount = parseInt(passengersInput.value || initialQty || "1", 10);
+
+  const totalPassengersSpan     = document.getElementById("totalPassengers");
+  const selectedSeatsCountSpan  = document.getElementById("selectedSeatsCount");
+  const selectedSeatsListSpan   = document.getElementById("selectedSeatsList");
+  const seatTripLabel           = document.getElementById("seatTripLabel");
+
+  function updateSeatsInfo() {
+    totalPassengersSpan.textContent    = passengersCount;
+    selectedSeatsCountSpan.textContent = selectedSeats.length;
+    selectedSeatsListSpan.textContent  =
+      selectedSeats.length ? selectedSeats.join(", ") : "None";
+  }
+
+  // تحديث عدد الركاب عند التغيير
+  passengersInput.addEventListener("change", () => {
+    let n = parseInt(passengersInput.value, 10);
+    if (Number.isNaN(n) || n <= 0) n = 1;
+    passengersCount = n;
+
+    // لو كان المقاعد المختارة أكثر من عدد الركاب، نقصها
+    while (selectedSeats.length > passengersCount) {
+      const removedSeat = selectedSeats.pop();
+      const btn = document.querySelector(`.seat[data-seat="${removedSeat}"]`);
+      if (btn) btn.classList.remove("selected");
+    }
+
+    updateSeatsInfo();
+  });
+
+  updateSeatsInfo();
 
   // اختيار رحلة من البطاقات
   document.querySelectorAll(".btn-select-trip").forEach(btn => {
@@ -526,37 +612,51 @@
       const card = btn.closest(".result-card");
       selectedTrain = {
         from: card.dataset.from || initialFrom,
-        to: card.dataset.to   || initialTo,
-        dep: card.dataset.dep,
-        arr: card.dataset.arr,
+        to:   card.dataset.to   || initialTo,
+        dep:  card.dataset.dep,
+        arr:  card.dataset.arr,
         travelClass: card.dataset.class,
         price: card.dataset.price
       };
 
-      // تحديث وصف الرحلة في قسم المقاعد
-      const label = document.getElementById("seatTripLabel");
-      label.textContent = `${selectedTrain.from} \u2192 ${selectedTrain.to} · `
-                        + `${selectedTrain.dep} – ${selectedTrain.arr} · `
-                        + `${selectedTrain.travelClass} · SAR ${selectedTrain.price}`;
+      // كل ما نغير الرحلة، نفضي المقاعد المختارة
+      selectedSeats = [];
+      document.querySelectorAll(".seat.selected").forEach(s => s.classList.remove("selected"));
+      updateSeatsInfo();
 
-      // تحريك الصفحة لقسم المقاعد
+      // تحديث نص الرحلة في قسم المقاعد
+      seatTripLabel.textContent =
+        `${selectedTrain.from} \u2192 ${selectedTrain.to} · ` +
+        `${selectedTrain.dep} – ${selectedTrain.arr} · ` +
+        `${selectedTrain.travelClass} · SAR ${selectedTrain.price}`;
+
+      // ننزل تلقائيًا لقسم المقاعد
       document.getElementById("seatSection").scrollIntoView({ behavior: "smooth" });
     });
   });
 
-  // اختيار مقعد
+  // اختيار المقاعد (عدة مقاعد = عدد الركاب)
   document.querySelectorAll(".seat").forEach(seatBtn => {
     if (seatBtn.classList.contains("aisle")) return;
 
     seatBtn.addEventListener("click", () => {
-      // إزالة الاختيار القديم
-      document.querySelectorAll(".seat.selected").forEach(s => s.classList.remove("selected"));
+      const seatId = seatBtn.dataset.seat;
 
-      // اختيار الجديد
-      seatBtn.classList.add("selected");
-      selectedSeat = seatBtn.dataset.seat;
+      if (seatBtn.classList.contains("selected")) {
+        // إلغاء اختيار مقعد
+        seatBtn.classList.remove("selected");
+        selectedSeats = selectedSeats.filter(s => s !== seatId);
+      } else {
+        // مقعد جديد
+        if (selectedSeats.length >= passengersCount) {
+          alert(`You already selected seats for all ${passengersCount} passenger(s).`);
+          return;
+        }
+        seatBtn.classList.add("selected");
+        selectedSeats.push(seatId);
+      }
 
-      document.getElementById("selectedSeat").textContent = selectedSeat;
+      updateSeatsInfo();
     });
   });
 
@@ -577,13 +677,13 @@
       alert("Please choose a train first.");
       return;
     }
-    if (!selectedSeat) {
-      alert("Please select a seat.");
+    if (selectedSeats.length !== passengersCount) {
+      alert(`Please select ${passengersCount} seat(s) before confirming.`);
       return;
     }
 
-    const dateInput = document.getElementById("travelDate").value || initialDate;
-    const passengers = document.getElementById("passengers").value || initialQty;
+    const dateInput   = document.getElementById("travelDate").value || initialDate;
+    const passengersV = passengersInput.value || initialQty;
 
     const booking = {
       id: "TMP-" + Date.now(),
@@ -593,19 +693,20 @@
       to: selectedTrain.to,
       dep: selectedTrain.dep,
       arr: selectedTrain.arr,
-      seat: selectedSeat,
+      seats: selectedSeats.join(", "),
       travelClass: selectedTrain.travelClass,
       coach: "2",
-      passengers: passengers,
+      passengers: passengersV,
       price: "SAR " + selectedTrain.price
     };
 
     addBooking(booking);
     alert("Booking saved. You can view it in 'My Bookings'.");
-    // لو حابة تنتقل مباشرة:
+    // لو حابة ينتقل مباشرة:
     // window.location.href = "my_bookings_design.html";
   });
 </script>
+
 
 <!-- لو تبون يكون زر اللغة والمودالات اشتغلوا هنا بعدين: -->
 <!-- <script src="main.js"></script> -->
