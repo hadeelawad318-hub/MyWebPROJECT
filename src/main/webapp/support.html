@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrackMyTrip | Support</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      color: white;
+      position: relative;
+      background-image: url('pexels-ingo-610683.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 0;
+    }
+
+    /* ===== Navbar ===== */
+    nav {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 60px;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(6px);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fbfeff;
+      letter-spacing: 1px;
+    }
+
+    .top-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .top-links a {
+      text-decoration: none;
+      color: #fff;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    .top-links a:hover {
+      color: #83bfff;
+    }
+
+    .top-links a.active {
+      color: #83bfff;
+      font-weight: 600;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      z-index: 3;
+    }
+
+    .auth-buttons button {
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+      padding: 8px 18px;
+      border-radius: 6px;
+    }
+
+    .auth-buttons .login {
+      background: #414446;
+    }
+
+    .auth-buttons .signup {
+      background: #83bfff;
+      color: #000;
+    }
+
+    .auth-buttons button:hover {
+      opacity: 0.8;
+    }
+
+    .language-toggle {
+      border: none;
+      background: #414446;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+
+    .language-toggle:hover {
+      background: #83bfff;
+    }
+
+    /* ===== Content ===== */
+    .hero {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      width: 100%;
+      padding: 40px 20px 60px;
+    }
+
+    .hero h1 {
+      font-size: 40px;
+      font-weight: 700;
+    }
+
+    .hero p {
+      margin-top: 8px;
+      font-size: 16px;
+      color: #e5e7eb;
+    }
+
+    .support-box {
+      position: relative;
+      z-index: 3;
+      background: white;
+      color: black;
+      width: 90%;
+      max-width: 1000px;
+      margin: 40px auto 40px;
+      padding: 30px 20px 26px;
+      border-radius: 16px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.45);
+      text-align: left;
+    }
+
+    .support-grid {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      gap: 24px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 10px;
+    }
+
+    /* FAQ */
+    .faq-item {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      background: #f9fafb;
+      cursor: pointer;
+    }
+
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      color: #111827;
+      font-weight: 500;
+    }
+
+    .faq-answer {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #4b5563;
+      display: none;
+    }
+
+    .faq-item.open .faq-answer {
+      display: block;
+    }
+
+    /* Contact form */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .field label {
+      font-size: 14px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      outline: none;
+      resize: vertical;
+    }
+
+    .field textarea {
+      min-height: 100px;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: #83bfff;
+      box-shadow: 0 0 0 2px rgba(131,191,255,.3);
+    }
+
+    .btn-send {
+      border: none;
+      background: #83bfff;
+      color: #000;
+      padding: 10px 24px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0,0,0,.25);
+      margin-top: 4px;
+    }
+
+    /* Contact info */
+    .contact-info {
+      margin-top: 16px;
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    .contact-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .contact-line i {
+      color: #006b75;
+    }
+
+    @media (max-width: 900px) {
+      .support-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        gap: 10px;
+        padding: 14px 20px;
+      }
+      .top-links {
+        gap: 15px;
+      }
+      .auth-buttons {
+        margin-top: 8px;
+      }
+      .hero h1 {
+        font-size: 30px;
+      }
+      .support-box {
+        width: 92%;
+        padding: 24px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Navbar ===== -->
+  <nav>
+    <div class="logo">TrackMyTrip</div>
+
+    <div class="top-links">
+      <a href="home.html">Home</a>
+      <a href="book.html">Book</a>
+      <a href="my_bookings_design.html">My Bookings</a>
+      <a href="support.html" class="active">Support</a>
+    </div>
+
+    <div class="auth-buttons">
+      <button class="login">Login</button>
+      <button class="signup">Sign Up</button>
+      <button class="language-toggle">
+        <i class="fa-solid fa-globe"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== Support Content ===== -->
+  <div class="hero">
+    <h1>Support & Help</h1>
+    <p>We are here to help you with payments, tickets, and account questions.</p>
+
+    <div class="support-box">
+      <div class="support-grid">
+        <!-- FAQ -->
+        <div>
+          <div class="section-title">Frequently Asked Questions</div>
+
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>How can I change my travel date?</span>
+              <i class="fa-solid fa-plus"></i>
+            </div>
+            <div class="faq-answer">
+              You can request a date change from the “My Bookings” page by selecting the trip and choosing “Reschedule”.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>What happens if my train is canceled?</span>
+              <i class="fa-solid fa-plus"></i>
+            </div>
+            <div class="faq-answer">
+              If your train is canceled, you will receive a full refund or the option to book another trip without extra fees.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>Can I get a refund after payment?</span>
+              <i class="fa-solid fa-plus"></i>
+            </div>
+            <div class="faq-answer">
+              Refund rules depend on the ticket type and time before departure. Please review the refund policy or contact support.
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact form + info -->
+        <div>
+          <div class="section-title">Contact Us</div>
+
+          <form>
+            <div class="field">
+              <label>Name</label>
+              <input type="text" placeholder="Your full name">
+            </div>
+
+            <div class="field">
+              <label>Email</label>
+              <input type="email" placeholder="example@mail.com">
+            </div>
+
+            <div class="field">
+              <label>Topic</label>
+              <select>
+                <option selected>Ticket inquiry</option>
+                <option>Payment issue</option>
+                <option>Modify passenger details</option>
+                <option>General question</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Message</label>
+              <textarea placeholder="Describe your issue or question"></textarea>
+            </div>
+
+            <button class="btn-send" type="button">Send message</button>
+          </form>
+
+          <div class="contact-info">
+            <div class="section-title" style="margin-top:16px;font-size:16px;">Contact details</div>
+
+            <div class="contact-line">
+              <i class="fa-solid fa-phone"></i>
+              <span>Phone (24/7): 9200 000 00</span>
+            </div>
+
+            <div class="contact-line">
+              <i class="fa-solid fa-envelope"></i>
+              <span>Email: support@trackmytrip.sa</span>
+            </div>
+
+            <div class="contact-line">
+              <i class="fa-solid fa-clock"></i>
+              <span>Response time: within 24 hours for email, instant for calls and chat.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // فتح/إغلاق الـ FAQ (بس تأثير بسيط)
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.addEventListener('click', () => {
+        item.classList.toggle('open');
+      });
+    });
+  </script>
+
+</body>
+</html>

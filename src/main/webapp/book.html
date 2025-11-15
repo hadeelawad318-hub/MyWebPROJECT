@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrackMyTrip | Book</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      color: white;
+      position: relative;
+      background-image: url('pexels-ingo-610683.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 0;
+    }
+
+    /* ===== Navbar ===== */
+    nav {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 60px;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(6px);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fbfeff;
+      letter-spacing: 1px;
+    }
+
+    .top-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .top-links a {
+      text-decoration: none;
+      color: #fff;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    .top-links a:hover { color: #83bfff; }
+    .top-links a.active {
+      color: #83bfff;
+      font-weight: 600;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      z-index: 3;
+    }
+
+    .auth-buttons button {
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+      padding: 8px 18px;
+      border-radius: 6px;
+    }
+
+    .auth-buttons .login { background: #414446; }
+    .auth-buttons .signup {
+      background: #83bfff;
+      color: #000;
+    }
+    .auth-buttons button:hover { opacity: 0.8; }
+
+    .language-toggle {
+      border: none;
+      background: #414446;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+    .language-toggle:hover { background: #83bfff; }
+
+    /* ===== Content ===== */
+    .hero {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      width: 100%;
+      padding: 40px 20px 60px;
+    }
+
+    .hero h1 {
+      font-size: 40px;
+      font-weight: 700;
+    }
+
+    .hero p {
+      margin-top: 8px;
+      font-size: 16px;
+      color: #e5e7eb;
+    }
+
+    .search-box {
+      position: relative;
+      z-index: 3;
+      background: white;
+      color: black;
+      width: 90%;
+      max-width: 1000px;
+      margin: 40px auto 40px;
+      padding: 30px 20px 26px;
+      border-radius: 16px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.45);
+      text-align: left;
+    }
+
+    .search-box h2 {
+      font-size: 20px;
+      margin-bottom: 16px;
+      color: #111827;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 14px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .field select,
+    .field input {
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .field select:focus,
+    .field input:focus {
+      border-color: #83bfff;
+      box-shadow: 0 0 0 2px rgba(131,191,255,.3);
+    }
+
+    .search-actions {
+      margin-top: 18px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-search {
+      border: none;
+      background: #83bfff;
+      color: #000;
+      padding: 10px 26px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0,0,0,.25);
+    }
+    .btn-search:hover { opacity: .9; }
+
+    /* results */
+    .results-title {
+      margin-top: 22px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .results {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .result-card {
+      background: #f9fafb;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .result-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: #006b75;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .result-icon i {
+      color: #fff;
+      font-size: 20px;
+    }
+
+    .result-meta {
+      flex: 1;
+    }
+
+    .result-route {
+      font-weight: 600;
+      color: #006b75;
+    }
+
+    .result-line {
+      font-size: 13px;
+      color: #4b5563;
+      margin-top: 3px;
+    }
+
+    .result-price {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+      margin-right: 12px;
+    }
+
+    .btn-small {
+      border: none;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #83bfff;
+      color: #000;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        gap: 10px;
+        padding: 14px 20px;
+      }
+      .top-links { gap: 15px; }
+      .auth-buttons { margin-top: 8px; }
+      .hero h1 { font-size: 30px; }
+      .search-box {
+        width: 92%;
+        padding: 24px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Navbar ===== -->
+  <nav>
+    <div class="logo">TrackMyTrip</div>
+
+    <div class="top-links">
+      <a href="home.html">Home</a>
+      <a href="book.html" class="active">Book</a>
+      <a href="my_bookings_design.html">My Bookings</a>
+      <a href="support.html">Support</a>
+    </div>
+
+    <div class="auth-buttons">
+      <button class="login">Login</button>
+      <button class="signup">Sign Up</button>
+      <button class="language-toggle">
+        <i class="fa-solid fa-globe"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== Book Content ===== -->
+  <div class="hero">
+    <h1>Book a Train</h1>
+    <p>Choose your route, date, and passengers to find the best train for your trip.</p>
+
+    <div class="search-box">
+      <h2>Search for a trip</h2>
+
+      <div class="form-grid">
+        <div class="field">
+          <label>From station</label>
+          <select id="fromStation">
+            <option selected>Riyadh</option>
+            <option>Dammam</option>
+            <option>Qurayyat</option>
+            <option>Makkah (Haramain)</option>
+            <option>Madinah</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>To station</label>
+          <select id="toStation">
+            <option selected>Qurayyat</option>
+            <option>Riyadh</option>
+            <option>Dammam</option>
+            <option>Makkah (Haramain)</option>
+            <option>Madinah</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Travel date</label>
+          <input type="date" id="travelDate" value="2025-11-14">
+        </div>
+
+        <div class="field">
+          <label>Passengers</label>
+          <input type="number" id="passengers" min="1" value="1">
+        </div>
+      </div>
+
+      <div class="search-actions">
+        <button class="btn-search" type="button">Search trains</button>
+      </div>
+
+      <div class="results-title">Sample search results</div>
+      <div class="results">
+        <!-- result 1 -->
+        <div class="result-card"
+             data-from="Riyadh"
+             data-to="Qurayyat"
+             data-dep="08:10 AM"
+             data-class="Economy"
+             data-price="180">
+          <div class="result-icon">
+            <i class="fa-solid fa-train-subway"></i>
+          </div>
+          <div class="result-meta">
+            <div class="result-route">Riyadh → Qurayyat</div>
+            <div class="result-line">
+              08:10 AM – 01:55 PM · SAR 180 · Economy
+            </div>
+          </div>
+          <span class="result-price">SAR 180</span>
+          <button class="btn-small" type="button" data-select>Select</button>
+        </div>
+
+        <!-- result 2 -->
+        <div class="result-card"
+             data-from="Riyadh"
+             data-to="Qurayyat"
+             data-dep="01:20 PM"
+             data-class="Business"
+             data-price="220">
+          <div class="result-icon">
+            <i class="fa-solid fa-train-subway"></i>
+          </div>
+          <div class="result-meta">
+            <div class="result-route">Riyadh → Qurayyat</div>
+            <div class="result-line">
+              01:20 PM – 06:00 PM · SAR 220 · Business
+            </div>
+          </div>
+          <span class="result-price">SAR 220</span>
+          <button class="btn-small" type="button" data-select>Select</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // حفظ حجز في localStorage
+    function generateId() {
+      return "TMP-" + Date.now();
+    }
+
+    function randomSeat() {
+      const row = Math.floor(Math.random() * 20) + 1;
+      const cols = ["A", "B", "C", "D"];
+      const col = cols[Math.floor(Math.random() * cols.length)];
+      return row + col;
+    }
+
+    function addBooking(booking) {
+      let list = [];
+      try {
+        list = JSON.parse(localStorage.getItem("trackMyTripBookings") || "[]");
+      } catch(e) {
+        list = [];
+      }
+      list.push(booking);
+      localStorage.setItem("trackMyTripBookings", JSON.stringify(list));
+    }
+
+    document.querySelectorAll("[data-select]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const card = btn.closest(".result-card");
+        const from = card.dataset.from;
+        const to = card.dataset.to;
+        const dep = card.dataset.dep;
+        const travelClass = card.dataset.class;
+        const price = card.dataset.price;
+
+        const dateInput = document.getElementById("travelDate").value || "2025-11-14";
+
+        const booking = {
+          id: generateId(),
+          date: dateInput,
+          status: "confirmed",
+          from: from,
+          to: to,
+          dep: dep,
+          seat: randomSeat(),
+          travelClass: travelClass,
+          coach: "2",
+          price: "SAR " + price
+        };
+
+        addBooking(booking);
+
+        alert("Booking saved. You can view it in 'My Bookings'.");
+        // لو حابة ينتقل مباشرة:
+        // window.location.href = "my_bookings_design.html";
+      });
+    });
+  </script>
+
+</body>
+</html>
