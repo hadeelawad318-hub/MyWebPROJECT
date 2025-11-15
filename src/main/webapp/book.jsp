@@ -66,9 +66,10 @@
       color: #6b7280;
     }
 
+    /* نخلي الترتيب طولي (قسم الرحلات ثم المقاعد تحتها) */
     .booking-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr); /* عمود واحد */
       gap: 20px;
     }
 
@@ -346,12 +347,6 @@
       box-shadow: none;
     }
 
-    @media (max-width: 900px) {
-      .booking-layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
     @media (max-width: 768px) {
       .booking-hero {
         top: 8%;
@@ -371,9 +366,11 @@
   String date = (String) request.getAttribute("date");
   Object qtyObj = request.getAttribute("qty");
   String qty  = (qtyObj != null) ? String.valueOf(qtyObj) : null;
+
+  boolean hasSearch = (from != null && to != null && date != null && qty != null);
 %>
 
-<!-- ===== Navbar (نفس نمط الهوم) ===== -->
+<!-- ===== Navbar ===== -->
 <nav>
   <div class="logo">TrackMyTrip</div>
 
@@ -400,7 +397,7 @@
     Review your trip details, choose a train, and select your seat.
   </p>
 
-  <% if (from != null && to != null && date != null && qty != null) { %>
+  <% if (hasSearch) { %>
     <p class="booking-summary">
       You searched for:
       <strong><%= from %> → <%= to %></strong>,
@@ -417,95 +414,129 @@
     </p>
 
     <div class="booking-layout">
-      <!-- عمود: خيارات الرحلات -->
+      <!-- قسم الرحلات + الميني فورم -->
       <div>
         <!-- نموذج مصغّر لتعديل البحث (٢×٢) -->
-        <div class="mini-form-grid">
-          <div class="field">
-            <label for="fromStation">From</label>
-            <input type="text" id="fromStation"
-                   value="<%= (from != null ? from : "") %>">
-          </div>
-          <div class="field">
-            <label for="toStation">To</label>
-            <input type="text" id="toStation"
-                   value="<%= (to != null ? to : "") %>">
-          </div>
-          <div class="field">
-            <label for="travelDate">Date</label>
-            <input type="date" id="travelDate"
-                   value="<%= (date != null ? date : "") %>">
-          </div>
-          <div class="field">
-            <label for="passengers">Passengers</label>
-            <input type="number" id="passengers" min="1"
-                   value="<%= (qty != null ? qty : "1") %>">
-          </div>
-        </div>
+        <form action="search" method="get" class="mini-form">
+          <div class="mini-form-grid">
+            <!-- From -->
+            <div class="field">
+              <label for="fromStation">From</label>
+              <select id="fromStation" name="from">
+                <option value="">-- Select departure --</option>
+                <option value="Riyadh"  <%= "Riyadh".equals(from)  ? "selected" : "" %>>Riyadh</option>
+                <option value="Jeddah"  <%= "Jeddah".equals(from)  ? "selected" : "" %>>Jeddah</option>
+                <option value="Dammam"  <%= "Dammam".equals(from)  ? "selected" : "" %>>Dammam</option>
+                <option value="Madinah" <%= "Madinah".equals(from) ? "selected" : "" %>>Madinah</option>
+              </select>
+            </div>
 
-        <div class="mini-actions">
-          <button type="button" class="btn-apply-search">
-            Apply changes
-          </button>
-        </div>
+            <!-- To -->
+            <div class="field">
+              <label for="toStation">To</label>
+              <select id="toStation" name="to">
+                <option value="">-- Select arrival --</option>
+                <option value="Riyadh"  <%= "Riyadh".equals(to)  ? "selected" : "" %>>Riyadh</option>
+                <option value="Jeddah"  <%= "Jeddah".equals(to)  ? "selected" : "" %>>Jeddah</option>
+                <option value="Dammam"  <%= "Dammam".equals(to)  ? "selected" : "" %>>Dammam</option>
+                <option value="Madinah" <%= "Madinah".equals(to) ? "selected" : "" %>>Madinah</option>
+              </select>
+            </div>
+
+            <!-- Date -->
+            <div class="field">
+              <label for="travelDate">Date</label>
+              <input type="date"
+                     id="travelDate"
+                     name="date"
+                     value="<%= (date != null ? date : "") %>">
+            </div>
+
+            <!-- Passengers -->
+            <div class="field">
+              <label for="passengers">Passengers</label>
+              <input type="number"
+                     id="passengers"
+                     name="qty"
+                     min="1"
+                     value="<%= (qty != null ? qty : "1") %>">
+            </div>
+          </div>
+
+          <div class="mini-actions">
+            <button type="submit" class="btn-apply-search">
+              Apply changes
+            </button>
+          </div>
+        </form>
 
         <div class="divider"></div>
 
-       <div class="results-title">Available trains</div>
-        <div class="results">
-          <!-- result 1 -->
-          <div class="result-card"
-               data-from="<%= (from != null ? from : "Riyadh") %>"
-               data-to="<%= (to   != null ? to   : "Qurayyat") %>"
-               data-dep="08:10 AM"
-               data-arr="01:55 PM"
-               data-class="Economy"
-               data-price="180">
-            <div class="result-icon">
-              <i class="fa-solid fa-train-subway"></i>
-            </div>
-            <div class="result-meta">
-              <div class="result-route">
-                <%= (from != null ? from : "Riyadh") %> → <%= (to != null ? to : "Qurayyat") %>
-              </div>
-              <div class="result-line">
-                08:10 AM – 01:55 PM · SAR 180 · Economy
-              </div>
-            </div>
-            <span class="result-price">SAR 180</span>
-            <button class="btn-select-trip" type="button">
-              Choose
-            </button>
-          </div>
+        <div class="results-title">Available trains</div>
 
-          <!-- result 2 -->
-          <div class="result-card"
-               data-from="<%= (from != null ? from : "Riyadh") %>"
-               data-to="<%= (to   != null ? to   : "Qurayyat") %>"
-               data-dep="01:20 PM"
-               data-arr="06:00 PM"
-               data-class="Business"
-               data-price="220">
-            <div class="result-icon">
-              <i class="fa-solid fa-train-subway"></i>
-            </div>
-            <div class="result-meta">
-              <div class="result-route">
-                <%= (from != null ? from : "Riyadh") %> → <%= (to != null ? to : "Qurayyat") %>
-              </div>
-              <div class="result-line">
-                01:20 PM – 06:00 PM · SAR 220 · Business
-              </div>
-            </div>
-            <span class="result-price">SAR 220</span>
-            <button class="btn-select-trip" type="button">
-              Choose
-            </button>
-          </div>
+
+<% if (hasSearch) { %>
+  <div class="results">
+    <!-- result 1 -->
+    <div class="result-card"
+         data-from="<%= from %>"
+         data-to="<%= to %>"
+         data-dep="08:10 AM"
+         data-arr="01:55 PM"
+         data-class="Economy"
+         data-price="180">
+      <div class="result-icon">
+        <i class="fa-solid fa-train-subway"></i>
+      </div>
+      <div class="result-meta">
+        <div class="result-route">
+          <%= from %> → <%= to %>
+        </div>
+        <div class="result-line">
+          08:10 AM – 01:55 PM · SAR 180 · Economy
         </div>
       </div>
+      <span class="result-price">SAR 180</span>
+      <button class="btn-select-trip" type="button">
+        Choose
+      </button>
+    </div>
 
-      <!-- عمود: اختيار المقاعد -->
+    <!-- result 2 -->
+    <div class="result-card"
+         data-from="<%= from %>"
+         data-to="<%= to %>"
+         data-dep="01:20 PM"
+         data-arr="06:00 PM"
+         data-class="Business"
+         data-price="220">
+      <div class="result-icon">
+        <i class="fa-solid fa-train-subway"></i>
+      </div>
+      <div class="result-meta">
+        <div class="result-route">
+          <%= from %> → <%= to %>
+        </div>
+        <div class="result-line">
+          01:20 PM – 06:00 PM · SAR 220 · Business
+        </div>
+      </div>
+      <span class="result-price">SAR 220</span>
+      <button class="btn-select-trip" type="button">
+        Choose
+      </button>
+    </div>
+  </div>
+<% } else { %>
+  <p style="font-size:13px; color:#6b7280; margin-top:4px;">
+    No trips to show yet. Please search for a trip first.
+  </p>
+<% } %>
+
+      </div>
+
+      <!-- عمود / قسم المقاعد: يظهر فقط إذا فيه بحث -->
+      <% if (hasSearch) { %>
       <div class="seat-section" id="seatSection">
         <div class="seat-section-title">Seat selection</div>
         <p class="seat-trip-label" id="seatTripLabel">
@@ -563,9 +594,10 @@
 
         <button type="button" class="btn-confirm" id="confirmBookingBtn">
           <i class="fa-solid fa-ticket"></i>
-          Confirm booking
+         Review and payment
         </button>
       </div>
+      <% } %>
     </div> <!-- نهاية booking-layout -->
   </div>   <!-- نهاية booking-card -->
 </div>     <!-- نهاية booking-hero -->
@@ -580,197 +612,204 @@ const initialQty  = "<%= (qty  != null ? qty  : "1") %>";
 let selectedTrain = null;
 let selectedSeats = [];
 
-const passengersInput        = document.getElementById("passengers");
-let   passengersCount        = parseInt(passengersInput.value || initialQty || "1", 10);
+// موجود دائماً لأن الميني فورم ظاهر دائماً
+const passengersInput = document.getElementById("passengers");
+let passengersCount   = parseInt(passengersInput.value || initialQty || "1", 10);
 
-const totalPassengersSpan    = document.getElementById("totalPassengers");
-const selectedSeatsCountSpan = document.getElementById("selectedSeatsCount");
-const selectedSeatsListSpan  = document.getElementById("selectedSeatsList");
-const seatTripLabel          = document.getElementById("seatTripLabel");
-const seatPriceInfo          = document.getElementById("seatPriceInfo");
-const confirmBtn             = document.getElementById("confirmBookingBtn");
+// هل قسم المقاعد موجود في الصفحة (يعني فيه بحث)؟
+const hasSeatsSection = !!document.getElementById("seatSection");
 
+if (hasSeatsSection) {
+  const totalPassengersSpan    = document.getElementById("totalPassengers");
+  const selectedSeatsCountSpan = document.getElementById("selectedSeatsCount");
+  const selectedSeatsListSpan  = document.getElementById("selectedSeatsList");
+  const seatTripLabel          = document.getElementById("seatTripLabel");
+  const seatPriceInfo          = document.getElementById("seatPriceInfo");
+  const confirmBtn             = document.getElementById("confirmBookingBtn");
 
-// تحديث حالة زر التأكيد (مفعّل / غير مفعّل)
-function updateConfirmState() {
-  const ready =
-    selectedTrain &&
-    passengersCount > 0 &&
-    selectedSeats.length === passengersCount;
+  // تحديث حالة زر التأكيد (مفعّل / غير مفعّل)
+  const updateConfirmState = () => {
+    const ready =
+      selectedTrain &&
+      passengersCount > 0 &&
+      selectedSeats.length === passengersCount;
 
-  confirmBtn.disabled = !ready;
-  confirmBtn.classList.toggle("ready", ready);
-}
+    confirmBtn.disabled = !ready;
+    confirmBtn.classList.toggle("ready", ready);
+  };
 
-// تحديث سطر السعر (سطر واحد بين العنوان وشبكة المقاعد)
-function updatePriceInfo() {
-  if (!seatPriceInfo) return;
+  // تحديث سطر السعر (سطر واحد بين العنوان وشبكة المقاعد)
+  const updatePriceInfo = () => {
+    if (!seatPriceInfo) return;
 
-  // ما اخترنا قطار لسه
-  if (!selectedTrain) {
-    seatPriceInfo.textContent = "Select a train to see the price.";
-    return;
-  }
+    if (!selectedTrain) {
+      seatPriceInfo.textContent = "Select a train to see the price.";
+      return;
+    }
 
-  const base = parseFloat(selectedTrain.price);
-  if (isNaN(base)) {
-    seatPriceInfo.textContent = "Price information is not available.";
-    return;
-  }
+    const base = parseFloat(selectedTrain.price);
+    if (isNaN(base)) {
+      seatPriceInfo.textContent = "Price information is not available.";
+      return;
+    }
 
-  // عدد المقاعد المختارة فعليًا
-  const seatCount = selectedSeats.length;
+    const seatCount = selectedSeats.length;
 
-  // لو ما اخترتِ ولا مقعد بعد
-  if (seatCount === 0) {
-    seatPriceInfo.textContent = "Price per seat: SAR " + base;
-    return;
-  }
+    if (seatCount === 0) {
+      seatPriceInfo.textContent = "Price per seat: SAR " + base;
+      return;
+    }
 
-  const total = base * seatCount;
-  const seatsWord = (seatCount === 1 ? "seat" : "seats");
+    const total = base * seatCount;
+    const seatsWord = (seatCount === 1 ? "seat" : "seats");
 
-  seatPriceInfo.textContent =
-    "Total price: SAR " + base + " × " +
-    seatCount + " " + seatsWord + " = SAR " + total;
-}
+    seatPriceInfo.textContent =
+      "Total price: SAR " + base + " × " +
+      seatCount + " " + seatsWord + " = SAR " + total;
+  };
 
-// تحديث معلومات المقاعد والسعر والزر
-function updateSeatsInfo() {
-  totalPassengersSpan.textContent    = passengersCount;
-  selectedSeatsCountSpan.textContent = selectedSeats.length;
-  selectedSeatsListSpan.textContent  =
-    selectedSeats.length ? selectedSeats.join(", ") : "None";
+  // تحديث معلومات المقاعد والسعر والزر
+  const updateSeatsInfo = () => {
+    totalPassengersSpan.textContent    = passengersCount;
+    selectedSeatsCountSpan.textContent = selectedSeats.length;
+    selectedSeatsListSpan.textContent  =
+      selectedSeats.length ? selectedSeats.join(", ") : "None";
 
-  updateConfirmState();
-  updatePriceInfo();
-}
+    updateConfirmState();
+    updatePriceInfo();
+  };
 
-// تحديث عدد الركاب عند التغيير
-passengersInput.addEventListener("change", () => {
-  let n = parseInt(passengersInput.value, 10);
-  if (Number.isNaN(n) || n <= 0) n = 1;
-  passengersCount = n;
+  // تحديث عدد الركاب عند التغيير
+  passengersInput.addEventListener("change", () => {
+    let n = parseInt(passengersInput.value, 10);
+    if (Number.isNaN(n) || n <= 0) n = 1;
+    passengersCount = n;
 
-  // لو كان المقاعد المختارة أكثر من عدد الركاب، نقصها
-  while (selectedSeats.length > passengersCount) {
-    const removedSeat = selectedSeats.pop();
-    const btn = document.querySelector('.seat[data-seat="' + removedSeat + '"]');
-    if (btn) btn.classList.remove("selected");
-  }
-
-  updateSeatsInfo();
-});
-
-updateSeatsInfo(); // أول تشغيل
-
-// اختيار رحلة من البطاقات
-document.querySelectorAll(".btn-select-trip").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const card = btn.closest(".result-card");
-
-    // حفظ بيانات القطار المختار
-    selectedTrain = {
-      from: card.dataset.from || initialFrom,
-      to:   card.dataset.to   || initialTo,
-      dep:  card.dataset.dep,
-      arr:  card.dataset.arr,
-      travelClass: card.dataset.class,
-      price: card.dataset.price
-    };
-
-    // تظليل الكرت المختار وتحديث نص الزر
-    document.querySelectorAll(".result-card").forEach(c => c.classList.remove("selected"));
-    document.querySelectorAll(".btn-select-trip").forEach(b => b.textContent = "Choose");
-
-    card.classList.add("selected");
-    btn.textContent = "Selected";
-
-    // كل ما نغير الرحلة، نفضي المقاعد المختارة
-    selectedSeats = [];
-    document.querySelectorAll(".seat.selected").forEach(s => s.classList.remove("selected"));
-    updateSeatsInfo();
-
-    // تحديث نص الرحلة في قسم المقاعد
-    seatTripLabel.textContent =
-      selectedTrain.from + " \u2192 " + selectedTrain.to + " · " +
-      selectedTrain.dep + " – " + selectedTrain.arr + " · " +
-      selectedTrain.travelClass + " · SAR " + selectedTrain.price;
-
-    // ننزل تلقائيًا لقسم المقاعد
-    document.getElementById("seatSection").scrollIntoView({ behavior: "smooth" });
-  });
-});
-
-// اختيار المقاعد (عدة مقاعد = عدد الركاب)
-document.querySelectorAll(".seat").forEach(seatBtn => {
-  if (seatBtn.classList.contains("aisle")) return;
-
-  seatBtn.addEventListener("click", () => {
-    const seatId = seatBtn.dataset.seat;
-
-    if (seatBtn.classList.contains("selected")) {
-      // إلغاء اختيار مقعد
-      seatBtn.classList.remove("selected");
-      selectedSeats = selectedSeats.filter(s => s !== seatId);
-    } else {
-      // مقعد جديد
-      if (selectedSeats.length >= passengersCount) {
-        alert("You already selected seats for all " + passengersCount + " passenger(s).");
-        return;
-      }
-      seatBtn.classList.add("selected");
-      selectedSeats.push(seatId);
+    // لو كان المقاعد المختارة أكثر من عدد الركاب، نقصها
+    while (selectedSeats.length > passengersCount) {
+      const removedSeat = selectedSeats.pop();
+      const btn = document.querySelector('.seat[data-seat="' + removedSeat + '"]');
+      if (btn) btn.classList.remove("selected");
     }
 
     updateSeatsInfo();
   });
-});
 
-// حفظ الحجز في localStorage عند التأكيد
-function addBooking(booking) {
-  let list = [];
-  try {
-    list = JSON.parse(localStorage.getItem("trackMyTripBookings") || "[]");
-  } catch(e) {
-    list = [];
-  }
-  list.push(booking);
-  localStorage.setItem("trackMyTripBookings", JSON.stringify(list));
-}
+  updateSeatsInfo(); // أول تشغيل
 
-confirmBtn.addEventListener("click", () => {
-  if (!selectedTrain) {
-    alert("Please choose a train first.");
-    return;
-  }
-  if (selectedSeats.length !== passengersCount) {
-    alert("Please select " + passengersCount + " seat(s) before confirming.");
-    return;
-  }
+  // اختيار رحلة من البطاقات
+  document.querySelectorAll(".btn-select-trip").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".result-card");
 
-  const dateInput   = document.getElementById("travelDate").value || initialDate;
-  const passengersV = passengersInput.value || initialQty;
+      selectedTrain = {
+        from: card.dataset.from || initialFrom,
+        to:   card.dataset.to   || initialTo,
+        dep:  card.dataset.dep,
+        arr:  card.dataset.arr,
+        travelClass: card.dataset.class,
+        price: card.dataset.price
+      };
 
-  const booking = {
-    id: "TMP-" + Date.now(),
-    date: dateInput,
-    status: "confirmed",
-    from: selectedTrain.from,
-    to: selectedTrain.to,
-    dep: selectedTrain.dep,
-    arr: selectedTrain.arr,
-    seats: selectedSeats.join(", "),
-    travelClass: selectedTrain.travelClass,
-    coach: "2",
-    passengers: passengersV,
-    price: "SAR " + selectedTrain.price
+      // تظليل الكرت المختار وتحديث نص الزر
+      document.querySelectorAll(".result-card").forEach(c => c.classList.remove("selected"));
+      document.querySelectorAll(".btn-select-trip").forEach(b => b.textContent = "Choose");
+
+      card.classList.add("selected");
+      btn.textContent = "Selected";
+
+      // كل ما نغير الرحلة، نفضي المقاعد المختارة
+      selectedSeats = [];
+      document.querySelectorAll(".seat.selected").forEach(s => s.classList.remove("selected"));
+      updateSeatsInfo();
+
+      // تحديث نص الرحلة في قسم المقاعد
+      seatTripLabel.textContent =
+        selectedTrain.from + " \u2192 " + selectedTrain.to + " · " +
+        selectedTrain.dep + " – " + selectedTrain.arr + " · " +
+        selectedTrain.travelClass + " · SAR " + selectedTrain.price;
+
+      // ننزل تلقائيًا لقسم المقاعد
+      document.getElementById("seatSection").scrollIntoView({ behavior: "smooth" });
+    });
+  });
+
+  // اختيار المقاعد (عدة مقاعد = عدد الركاب)
+  document.querySelectorAll(".seat").forEach(seatBtn => {
+    if (seatBtn.classList.contains("aisle")) return;
+
+    seatBtn.addEventListener("click", () => {
+      const seatId = seatBtn.dataset.seat;
+
+      if (seatBtn.classList.contains("selected")) {
+        // إلغاء اختيار مقعد
+        seatBtn.classList.remove("selected");
+        selectedSeats = selectedSeats.filter(s => s !== seatId);
+      } else {
+        // مقعد جديد
+        if (selectedSeats.length >= passengersCount) {
+          alert("You already selected seats for all " + passengersCount + " passenger(s).");
+          return;
+        }
+        seatBtn.classList.add("selected");
+        selectedSeats.push(seatId);
+      }
+
+      updateSeatsInfo();
+    });
+  });
+
+  // حفظ الحجز في localStorage عند التأكيد
+  const addBooking = (booking) => {
+    let list = [];
+    try {
+      list = JSON.parse(localStorage.getItem("trackMyTripBookings") || "[]");
+    } catch(e) {
+      list = [];
+    }
+    list.push(booking);
+    localStorage.setItem("trackMyTripBookings", JSON.stringify(list));
   };
 
-  addBooking(booking);
-  alert("Booking saved. You can view it in 'My Bookings'.");
-  // window.location.href = "my_bookings_design.html";
-});
+  confirmBtn.addEventListener("click", () => {
+    if (!selectedTrain) {
+      alert("Please choose a train first.");
+      return;
+    }
+    if (selectedSeats.length !== passengersCount) {
+      alert("Please select " + passengersCount + " seat(s) before confirming.");
+      return;
+    }
+
+    const dateInput   = document.getElementById("travelDate").value || initialDate;
+    const passengersV = passengersInput.value || initialQty;
+
+    const booking = {
+      id: "TMP-" + Date.now(),
+      date: dateInput,
+      status: "confirmed",
+      from: selectedTrain.from,
+      to: selectedTrain.to,
+      dep: selectedTrain.dep,
+      arr: selectedTrain.arr,
+      seats: selectedSeats.join(", "),
+      travelClass: selectedTrain.travelClass,
+      coach: "2",
+      passengers: passengersV,
+      price: "SAR " + selectedTrain.price
+    };
+
+    addBooking(booking);
+
+ // بدل ما نقول له راح لماي بوكينق، نقول له راح نراجع الحجز وندفع
+ // ولو حابة تقدرين حتى تشيلين الـ alert كامل
+ alert("Your seats are selected. Next step: review and payment.");
+
+ // نروح لصفحة تأكيد الحجز والخدمات
+ window.location.href = "ConfirmBooking.jsp";
+
+  });
+}
 </script>
 
 <!-- لو تبون يكون زر اللغة والمودالات اشتغلوا هنا بعدين: -->

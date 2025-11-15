@@ -401,7 +401,7 @@
 
       <!-- ===== Right side: Extras + Payment ===== -->
       <div class="extras-payment">
-        <div class="section-title">Extras & payment</div>
+        <div class="section-title">Extras and payment</div>
         <div class="section-sub">
           Choose optional services. First 10kg of baggage is free; extra weight is charged.
         </div>
@@ -564,10 +564,12 @@
   wifiCheckbox.addEventListener("change", calculateExtras);
 
   // زر التأكيد النهائي (Prototype)
-  document.getElementById("finalConfirmBtn").addEventListener("click", () => {
-    // هنا ممكن مستقبلاً تتحققين من تعبئة الحقول
-    alert("Booking confirmed (demo). Passenger details and extras are not saved to any database.");
-  });
+ document.getElementById("finalConfirmBtn").addEventListener("click", () => {
+  alert("Your payment is confirmed (demo). Your booking is now active.");
+
+  // بعد “الدفع” نروح لصفحة ماي بوكينق
+  window.location.href = "my_bookings_design.html";
+});
 </script>
 
 <!-- لو حابة تفعّلين زر اللغة والمودالات هنا لاحقاً: -->
