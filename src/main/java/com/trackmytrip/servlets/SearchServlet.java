@@ -1,11 +1,6 @@
 package com.trackmytrip.servlets;
 
-
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,119 +8,70 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-
 @WebServlet("/search")
 public class SearchServlet extends HttpServlet {
 
-    // عدّلي معلومات الاتصال حسب قاعدة بياناتك
-    private static final String URL  =
-            "jdbc:mysql://localhost:3306/train_booking?useSSL=false&serverTimezone=UTC";
-    private static final String USER = "root";      // اسم المستخدم في MySQL
-    private static final String PASS = "password";  // كلمة المرور في MySQL
+    private static final long serialVersionUID = 1L;
+
+    // بيانات الاتصال بقاعدة البيانات (عدليها حسب إعداداتك)
+    private static final String URL  = "jdbc:mysql://localhost:3306/train_booking?useSSL=false&serverTimezone=UTC";
+    private static final String USER = "root";
+    private static final String PASS = "password";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // ترميز عربي
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
 
+        // قراءة القيم من الفورم
         String from  = request.getParameter("from");
         String to    = request.getParameter("to");
         String date  = request.getParameter("date");
         String qtySt = request.getParameter("qty");
 
-        // تحقق بسيط من المدخلات
-        if (from == null || to == null || date == null || qtySt == null ||
-            from.isEmpty() || to.isEmpty() || date.isEmpty()) {
+        // التحقق من أن كل الحقول معبّأة
+        if (isNullOrEmpty(from) || isNullOrEmpty(to) ||
+            isNullOrEmpty(date) || isNullOrEmpty(qtySt)) {
 
-            request.setAttribute("error", "الرجاء إدخال جميع بيانات البحث.");
+            request.setAttribute("error",
+                    "الرجاء إدخال جميع بيانات البحث (محطة المغادرة، محطة الوصول، التاريخ، وعدد الركاب).");
             request.getRequestDispatcher("search.jsp").forward(request, response);
             return;
         }
 
+        // التحقق من صحة عدد الركاب
         int qty;
         try {
             qty = Integer.parseInt(qtySt);
-        } catch (NumberFormatException e) {
-            request.setAttribute("error", "عدد الركّاب غير صحيح.");
+            if (qty <= 0) {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException ex) {
+            request.setAttribute("error", "عدد الركاب غير صحيح. الرجاء إدخال رقم موجب.");
             request.getRequestDispatcher("search.jsp").forward(request, response);
             return;
         }
 
-        StringBuilder rows = new StringBuilder();
-        int count = 0;
+        // TODO: هنا لاحقاً تضيفين كود الاتصال بقاعدة البيانات وجلب الرحلات
+        // مؤقتاً سنعيد نفس صفحة البحث مع رسالة نجاح بسيطة
 
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            // تحميل درايفر MySQL (يتطلب وجود mysql-connector-j في WEB-INF/lib)
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection(URL, USER, PASS);
-
-            String sql =
-                "SELECT id, from_code, to_code, depart_time, arrive_time, class, price, available_seats " +
-                "FROM trips " +
-                "WHERE from_code = ? AND to_code = ? AND travel_date = ? AND available_seats >= ? " +
-                "ORDER BY depart_time";
-
-            ps = conn.prepareStatement(sql);
-            ps.setString(1, from);
-            ps.setString(2, to);
-            ps.setString(3, date);   // لو نوع العمود DATE هذا يكفي
-            ps.setInt(4, qty);
-
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                count++;
-
-                int id             = rs.getInt("id");
-                String fromCode    = rs.getString("from_code");
-                String toCode      = rs.getString("to_code");
-                String departTime  = rs.getString("depart_time");
-                String arriveTime  = rs.getString("arrive_time");
-                String seatClass   = rs.getString("class");
-                double price       = rs.getDouble("price");
-                int availableSeats = rs.getInt("available_seats");
-
-                // نبني صف HTML للجدول
-                rows.append("<tr>");
-                rows.append("<td>").append(fromCode).append("</td>");
-                rows.append("<td>").append(toCode).append("</td>");
-                rows.append("<td>").append(departTime).append("</td>");
-                rows.append("<td>").append(arriveTime).append("</td>");
-                rows.append("<td>").append(seatClass).append("</td>");
-                rows.append("<td>").append(price).append("</td>");
-                rows.append("<td>").append(availableSeats).append("</td>");
-                rows.append("<td>")
-                        .append("<form action='select' method='post'>")
-                        .append("<input type='hidden' name='tripId' value='").append(id).append("'>")
-                        .append("<input type='hidden' name='qty' value='").append(qty).append("'>")
-                        .append("<button type='submit'>اختيار</button>")
-                        .append("</form>")
-                        .append("</td>");
-                rows.append("</tr>");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "حدث خطأ أثناء الاتصال بقاعدة البيانات.");
-        } finally {
-            try { if (rs != null) rs.close(); } catch (Exception ignored) {}
-            try { if (ps != null) ps.close(); } catch (Exception ignored) {}
-            try { if (conn != null) conn.close(); } catch (Exception ignored) {}
-        }
-
-        // إرسال النتائج إلى صفحة JSP
-        request.setAttribute("rowHtml", rows.toString());
-        request.setAttribute("count", count);
+        request.setAttribute("from", from);
+        request.setAttribute("to", to);
+        request.setAttribute("date", date);
         request.setAttribute("qty", qty);
+        request.setAttribute("success", "تم استقبال طلب البحث بنجاح (backend تجريبي، بدون ربط بقاعدة البيانات بعد).");
 
         request.getRequestDispatcher("search.jsp").forward(request, response);
     }
+
+    private boolean isNullOrEmpty(String s) {
+        return s == null || s.trim().isEmpty();
+    }
 }
+
 
 

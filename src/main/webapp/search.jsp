@@ -1,50 +1,86 @@
-<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>TrackMyTrip | Search</title>
+    <title>TrackMyTrip | البحث عن الرحلات</title>
+
     <style>
+        /* إعدادات عامة للصفحة */
+        * {
+            box-sizing: border-box;
+            font-variant-numeric: lining-nums; /* نحاول توحيد شكل الأرقام */
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f3f5f8;
             margin: 0;
             padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                         "Segoe UI", "Tahoma", sans-serif;
+            background: #f3f5f8;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 15px;
         }
 
         .container {
-            max-width: 700px;
-            margin: 60px auto;
-            background: #fff;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            width: 100%;
+            background: #ffffff;
+            padding: 32px 40px 40px;
+            border-radius: 18px;
+            box-shadow: 0 12px 35px rgba(15, 23, 42, 0.10);
         }
 
         h1 {
+            margin: 0 0 8px;
+            font-size: 32px;
             text-align: center;
-            margin-bottom: 10px;
         }
 
-        p.subtitle {
+        .subtitle {
+            margin: 0 0 24px;
             text-align: center;
-            color: #555;
-            margin-bottom: 25px;
+            color: #6b7280;
+            font-size: 16px;
         }
 
-        .error {
-            background: #ffe5e5;
-            color: #b00020;
-            border: 1px solid #ffb3b3;
-            padding: 10px 15px;
-            border-radius: 6px;
+        /* رسائل الأخطاء / النجاح */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
             margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #ecfdf5;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        /* الفورم */
+        form {
+            margin-top: 8px;
         }
 
         .form-row {
             display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 16px;
+            margin-bottom: 16px;
         }
 
         .form-group {
@@ -55,108 +91,184 @@
 
         label {
             font-size: 14px;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            color: #111827;
         }
 
-        input[type="text"],
+        select,
         input[type="date"],
-        input[type="number"],
-        select {
-            padding: 8px 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
+        input[type="number"] {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
             font-size: 14px;
+            background-color: #ffffff;
+            color: #111827;
+            font-family: inherit;
         }
 
-        button {
+        select:focus,
+        input[type="date"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+        }
+
+        /* نحافظ على زر التقويم، لكن نجعل الأرقام إنجليزية */
+        input[type="date"] {
+            direction: ltr;         /* ترتيب اليوم/الشهر/السنة */
+            text-align: right;      /* الرقم يطلع يمين */
+            unicode-bidi: plaintext;
+        }
+
+        /* زر البحث */
+        .btn-submit {
             width: 100%;
-            padding: 10px;
+            padding: 14px;
             border: none;
-            border-radius: 6px;
+            border-radius: 999px;
             background: #0069d9;
-            color: #fff;
+            color: #ffffff;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 8px;
+            transition: background 0.15s ease, transform 0.05s ease;
         }
 
-        button:hover {
+        .btn-submit:hover {
             background: #0053ae;
         }
 
+        .btn-submit:active {
+            transform: translateY(1px);
+        }
+
         .back-link {
+            margin-top: 18px;
             text-align: center;
-            margin-top: 15px;
         }
 
         .back-link a {
+            color: #2563eb;
             text-decoration: none;
-            color: #0069d9;
-            font-size: 14px;
+            font-size: 15px;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* استجابة للشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px 18px 28px;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Search Trips</h1>
-    <p class="subtitle">ابحث عن رحلتك بين مدن المملكة</p>
+<div class="page-wrapper">
+    <div class="container">
+        <h1>البحث عن الرحلات</h1>
+        <p class="subtitle">ابحث عن رحلتك بين مدن المملكة بسهولة وسرعة</p>
 
-    <% 
-        String error = (String) request.getAttribute("error");
-        if (error != null) {
-    %>
-    <div class="error">
-        <%= error %>
-    </div>
-    <% } %>
+        <%
+            String error   = (String) request.getAttribute("error");
+            String success = (String) request.getAttribute("success");
+        %>
 
-    <!-- form يرسل البيانات إلى السيرفلت /search -->
-    <form action="search" method="get">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="from">From (Departure)</label>
-                <select id="from" name="from">
-                    <option value="">-- اختر محطة المغادرة --</option>
-                    <option value="Riyadh">Riyadh</option>
-                    <option value="Jeddah">Jeddah</option>
-                    <option value="Dammam">Dammam</option>
-                    <option value="Madinah">Madinah</option>
-                </select>
+        <% if (error != null) { %>
+            <div class="alert alert-error">
+                <%= error %>
+            </div>
+        <% } else if (success != null) { %>
+            <div class="alert alert-success">
+                <%= success %>
+            </div>
+        <% } %>
+
+        <!-- نموذج البحث -->
+        <form action="search" method="get">
+
+            <!-- من / إلى -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="from">من (محطة المغادرة)</label>
+                    <select id="from" name="from">
+                        <option value="">-- اختر محطة المغادرة --</option>
+                        <option value="Riyadh">الرياض</option>
+                        <option value="Jeddah">جدة</option>
+                        <option value="Dammam">الدمام</option>
+                        <option value="Madinah">المدينة المنورة</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="to">إلى (محطة الوصول)</label>
+                    <select id="to" name="to">
+                        <option value="">-- اختر محطة الوصول --</option>
+                        <option value="Riyadh">الرياض</option>
+                        <option value="Jeddah">جدة</option>
+                        <option value="Dammam">الدمام</option>
+                        <option value="Madinah">المدينة المنورة</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="to">To (Arrival)</label>
-                <select id="to" name="to">
-                    <option value="">-- اختر محطة الوصول --</option>
-                    <option value="Riyadh">Riyadh</option>
-                    <option value="Jeddah">Jeddah</option>
-                    <option value="Dammam">Dammam</option>
-                    <option value="Madinah">Madinah</option>
-                </select>
+            <!-- التاريخ وعدد الركاب -->
+       <div class="form-row">
+                <div class="form-group">
+                    <label for="date">تاريخ السفر</label>
+                    <input
+                        type="date"
+                        id="date"
+                        name="date"
+                        placeholder="YYYY-MM-DD"
+        pattern="\d{4}-\d{2}-\d{2}"
+        inputmode="numeric"
+        lang="en"
+        dir="ltr">
+                </div>
+
+
+                <div class="form-group">
+                    <label for="qty">عدد الركاب</label>
+                    <input
+                        type="number"
+                        id="qty"
+                        name="qty"
+                        min="1"
+                        max="9"
+                        value="1"
+                        lang="en"
+                        inputmode="numeric">
+                </div>
             </div>
-        </div>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label for="date">Travel Date</label>
-                <input type="date" id="date" name="date">
+            <button type="submit" class="btn-submit">بحث</button>
+
+            <div class="back-link">
+                <!-- عدلي الرابط حسب اسم صفحتكم الرئيسية -->
+                <a href="home.html">← الرجوع إلى الصفحة الرئيسية</a>
             </div>
-
-            <div class="form-group">
-                <label for="qty">Passengers</label>
-                <input type="number" id="qty" name="qty" min="1" max="9" value="1">
-            </div>
-        </div>
-
-        <button type="submit">Search</button>
-    </form>
-
-    <div class="back-link">
-        <!-- لاحقاً تقدرون تربطونه بصفحة Home الرئيسية -->
-     <a href="home.html">← Back to Home</a>
+        </form>
     </div>
 </div>
 
 </body>
 </html>
+
+
+
+
