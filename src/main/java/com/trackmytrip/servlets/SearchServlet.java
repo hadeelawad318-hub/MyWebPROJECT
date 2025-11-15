@@ -59,13 +59,18 @@ public class SearchServlet extends HttpServlet {
         // TODO: هنا لاحقاً تضيفين كود الاتصال بقاعدة البيانات وجلب الرحلات
         // مؤقتاً سنعيد نفس صفحة البحث مع رسالة نجاح بسيطة
 
+     // تمرير قيم البحث إلى صفحة الحجز
         request.setAttribute("from", from);
         request.setAttribute("to", to);
         request.setAttribute("date", date);
         request.setAttribute("qty", qty);
-        request.setAttribute("success", "تم استقبال طلب البحث بنجاح (backend تجريبي، بدون ربط بقاعدة البيانات بعد).");
 
-        request.getRequestDispatcher("search.jsp").forward(request, response);
+        // ممكن نخلي رسالة النجاح لو حبيتي تستخدمينها في book.jsp
+        request.setAttribute("success", "تم استقبال طلب البحث بنجاح (هذا مثال تجريبي بدون ربط فعلي بقاعدة البيانات).");
+
+        // توجيه إلى صفحة الحجز
+        request.getRequestDispatcher("book.jsp").forward(request, response);
+
     }
 
     private boolean isNullOrEmpty(String s) {
