@@ -361,17 +361,16 @@
   border-radius: 999px;
   font-size: 11px;
   font-weight: 600;
-  margin-left: 6px;        /* تزح لقليل يسار عن النص */
-  vertical-align: middle;
+  margin-left: 6px;
 }
 
 .class-badge.economy {
-  background: #dcfce7;     /* أخضر فاتح */
+  background: #dcfce7;  /* أخضر فاتح */
   color: #15803d;
 }
 
 .class-badge.business {
-  background: #dbeafe;     /* أزرق فاتح */
+  background: #dbeafe;  /* أزرق فاتح */
   color: #1d4ed8;
 }
 
@@ -453,24 +452,30 @@
             <div class="field">
               <label for="fromStation">From</label>
               <select id="fromStation" name="from">
-                <option value="">-- Select departure --</option>
-                <option value="Riyadh"  <%= "Riyadh".equals(from)  ? "selected" : "" %>>Riyadh</option>
-                <option value="Jeddah"  <%= "Jeddah".equals(from)  ? "selected" : "" %>>Jeddah</option>
-                <option value="Dammam"  <%= "Dammam".equals(from)  ? "selected" : "" %>>Dammam</option>
-                <option value="Madinah" <%= "Madinah".equals(from) ? "selected" : "" %>>Madinah</option>
-              </select>
+  <option value="">-- Select departure --</option>
+  <option value="Riyadh"     <%= "Riyadh".equals(from)     ? "selected" : "" %>>Riyadh</option>
+  <option value="Dammam"     <%= "Dammam".equals(from)     ? "selected" : "" %>>Dammam</option>
+  <option value="Makkah"     <%= "Makkah".equals(from)     ? "selected" : "" %>>Makkah</option>
+  <option value="Jeddah"     <%= "Jeddah".equals(from)     ? "selected" : "" %>>Jeddah</option>
+  <option value="Al-Qassim"  <%= "Al-Qassim".equals(from)  ? "selected" : "" %>>Al-Qassim</option>
+  <option value="Hail"       <%= "Hail".equals(from)       ? "selected" : "" %>>Hail</option>
+</select>
+
             </div>
 
             <!-- To -->
             <div class="field">
               <label for="toStation">To</label>
               <select id="toStation" name="to">
-                <option value="">-- Select arrival --</option>
-                <option value="Riyadh"  <%= "Riyadh".equals(to)  ? "selected" : "" %>>Riyadh</option>
-                <option value="Jeddah"  <%= "Jeddah".equals(to)  ? "selected" : "" %>>Jeddah</option>
-                <option value="Dammam"  <%= "Dammam".equals(to)  ? "selected" : "" %>>Dammam</option>
-                <option value="Madinah" <%= "Madinah".equals(to) ? "selected" : "" %>>Madinah</option>
-              </select>
+  <option value="">-- Select arrival --</option>
+  <option value="Riyadh"     <%= "Riyadh".equals(to)     ? "selected" : "" %>>Riyadh</option>
+  <option value="Dammam"     <%= "Dammam".equals(to)     ? "selected" : "" %>>Dammam</option>
+  <option value="Makkah"     <%= "Makkah".equals(to)     ? "selected" : "" %>>Makkah</option>
+  <option value="Jeddah"     <%= "Jeddah".equals(to)     ? "selected" : "" %>>Jeddah</option>
+  <option value="Al-Qassim"  <%= "Al-Qassim".equals(to)  ? "selected" : "" %>>Al-Qassim</option>
+  <option value="Hail"       <%= "Hail".equals(to)       ? "selected" : "" %>>Hail</option>
+</select>
+
             </div>
 
             <!-- Date -->
@@ -508,59 +513,96 @@
 <% if (hasSearch) { %>
 <div class="results">
 
-<!-- result 1: نفس الوقت - درجة Economy -->
-<div class="result-card"
-     data-from="<%= from %>"
-     data-to="<%= to %>"
-     data-dep="08:10 AM"
-     data-arr="01:55 PM"
-     data-class="Economy"
-     data-price="180">
-  <div class="result-icon">
-    <i class="fa-solid fa-train-subway"></i>
-  </div>
-  <div class="result-meta">
-    <div class="result-route">
-      <%= from %> → <%= to %>
+  <!-- ===== وقت 1 — Economy ===== -->
+  <div class="result-card"
+       data-from="<%= from %>"
+       data-to="<%= to %>"
+       data-dep="08:10 AM"
+       data-arr="01:55 PM"
+       data-class="Economy"
+       data-price="100">
+    <div class="result-icon">
+      <i class="fa-solid fa-train-subway"></i>
     </div>
-    <div class="result-line">
-      08:10 AM – 01:55 PM · SAR 180 ·
-      <span class="class-badge economy">Economy</span>
+    <div class="result-meta">
+      <div class="result-route"><%= from %> → <%= to %></div>
+      <div class="result-line">
+        08:10 AM – 01:55 PM · SAR 100
+        <span class="class-badge economy">Economy</span>
+      </div>
     </div>
+    <span class="result-price">SAR 100</span>
+    <button class="btn-select-trip" type="button">Choose</button>
   </div>
-  <span class="result-price">SAR 180</span>
-  <button class="btn-select-trip" type="button">
-    Choose
-  </button>
+
+  <!-- ===== وقت 1 — Business ===== -->
+  <div class="result-card"
+       data-from="<%= from %>"
+       data-to="<%= to %>"
+       data-dep="08:10 AM"
+       data-arr="01:55 PM"
+       data-class="Business"
+       data-price="150">
+    <div class="result-icon">
+      <i class="fa-solid fa-train-subway"></i>
+    </div>
+    <div class="result-meta">
+      <div class="result-route"><%= from %> → <%= to %></div>
+      <div class="result-line">
+        08:10 AM – 01:55 PM · SAR 150
+        <span class="class-badge business">Business</span>
+      </div>
+    </div>
+    <span class="result-price">SAR 150</span>
+    <button class="btn-select-trip" type="button">Choose</button>
+  </div>
+
+  <!-- ===== وقت 2 — Economy ===== -->
+  <div class="result-card"
+       data-from="<%= from %>"
+       data-to="<%= to %>"
+       data-dep="04:00 PM"
+       data-arr="09:20 PM"
+       data-class="Economy"
+       data-price="115">
+    <div class="result-icon">
+      <i class="fa-solid fa-train-subway"></i>
+    </div>
+    <div class="result-meta">
+      <div class="result-route"><%= from %> → <%= to %></div>
+      <div class="result-line">
+        04:00 PM – 09:20 PM · SAR 115
+        <span class="class-badge economy">Economy</span>
+      </div>
+    </div>
+    <span class="result-price">SAR 115</span>
+    <button class="btn-select-trip" type="button">Choose</button>
+  </div>
+
+  <!-- ===== وقت 2 — Business ===== -->
+  <div class="result-card"
+       data-from="<%= from %>"
+       data-to="<%= to %>"
+       data-dep="04:00 PM"
+       data-arr="09:20 PM"
+       data-class="Business"
+       data-price="200">
+    <div class="result-icon">
+      <i class="fa-solid fa-train-subway"></i>
+    </div>
+    <div class="result-meta">
+      <div class="result-route"><%= from %> → <%= to %></div>
+      <div class="result-line">
+        04:00 PM – 09:20 PM · SAR 200
+        <span class="class-badge business">Business</span>
+      </div>
+    </div>
+    <span class="result-price">SAR 200</span>
+    <button class="btn-select-trip" type="button">Choose</button>
+  </div>
+
 </div>
 
-<!-- result 2: نفس الوقت - درجة Business -->
-<div class="result-card"
-     data-from="<%= from %>"
-     data-to="<%= to %>"
-     data-dep="08:10 AM"
-     data-arr="01:55 PM"
-     data-class="Business"
-     data-price="260">
-  <div class="result-icon">
-    <i class="fa-solid fa-train-subway"></i>
-  </div>
-  <div class="result-meta">
-    <div class="result-route">
-      <%= from %> → <%= to %>
-    </div>
-    <div class="result-line">
-      08:10 AM – 01:55 PM · SAR 260 ·
-      <span class="class-badge business">Business</span>
-    </div>
-  </div>
-  <span class="result-price">SAR 260</span>
-  <button class="btn-select-trip" type="button">
-    Choose
-  </button>
-</div>
-
-</div>
 <% } else { %>
   <p style="font-size:13px; color:#6b7280; margin-top:4px;">
     No trips to show yet. Please search for a trip first.
